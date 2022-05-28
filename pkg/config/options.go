@@ -53,6 +53,7 @@ type KanikoOptions struct {
 	Git                    KanikoGitOptions
 	IgnorePaths            multiArg
 	DockerfilePath         string
+	DestinationPath        string
 	SrcContext             string
 	SnapshotMode           string
 	CustomPlatform         string

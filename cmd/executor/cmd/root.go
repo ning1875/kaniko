@@ -18,6 +18,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -102,6 +103,11 @@ var RootCmd = &cobra.Command{
 			if len(opts.Destinations) == 0 && opts.ImageNameTagDigestFile != "" {
 				return errors.New("You must provide --destination if setting ImageNameTagDigestFile")
 			}
+			if opts.DestinationPath != "" {
+				content, _ := ioutil.ReadFile(opts.DestinationPath)
+				opts.Destinations = []string{string(content)}
+			}
+
 			// Update ignored paths
 			if opts.IgnoreVarRun {
 				// /var/run is a special case. It's common to mount in /var/run/docker.sock
@@ -180,6 +186,7 @@ var RootCmd = &cobra.Command{
 // addKanikoOptionsFlags configures opts
 func addKanikoOptionsFlags() {
 	RootCmd.PersistentFlags().StringVarP(&opts.DockerfilePath, "dockerfile", "f", "Dockerfile", "Path to the dockerfile to be built.")
+	RootCmd.PersistentFlags().StringVarP(&opts.DestinationPath, "destination-path", "dp", "", "Path to the image_name  to be read.")
 	RootCmd.PersistentFlags().StringVarP(&opts.SrcContext, "context", "c", "/workspace/", "Path to the dockerfile build context.")
 	RootCmd.PersistentFlags().StringVarP(&ctxSubPath, "context-sub-path", "", "", "Sub path within the given context.")
 	RootCmd.PersistentFlags().StringVarP(&opts.Bucket, "bucket", "b", "", "Name of the GCS bucket from which to access build context as tarball.")
